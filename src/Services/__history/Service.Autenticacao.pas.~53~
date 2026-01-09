@@ -1,0 +1,149 @@
+unit Service.Autenticacao;
+
+interface
+
+uses
+  System.SysUtils,
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  Horse,
+  Horse.Commons;
+
+type
+  TServiceAutenticacao = class(TServiceBase)
+public
+  function login(AUsuario: String; ASenha: String): Boolean;
+  function Cript(Action, Src: string): string;
+  end;
+
+implementation
+
+{ TServiceAutenticao }
+
+function TServiceAutenticacao.Cript(Action, Src: string): string;
+Label Fim;
+var
+  KeyLen,
+  KeyPos,
+  SrcPos,
+  SrcAsc,
+  TmpSrcAsc,
+  Range,
+  OffSet: Integer;
+  Dest,
+  Key: string;
+begin
+  if (Src = '') then
+  begin
+    Result := '';
+    Goto Fim;
+  end;
+
+  Key := 'YUQL23KL23DF90WI5E1JAS467NMCXXL6JAOAUWWMCL0AOMM4A4VZYW9KHJUI2347EJHJKDF3424SKL K3LAKDJSL9RTIKJ';
+  Dest := '';
+  KeyLen := Length(Key);
+  KeyPos := 0;
+  Range := 256;
+
+  if (Action = UpperCase('C')) then
+  begin
+    Randomize;
+    OffSet := Random(Range);
+    Dest := Format('%1.2x', [OffSet]);
+
+    for SrcPos := 1 to Length(Src) do
+    begin
+      SrcAsc := (Ord(Src[SrcPos]) + OffSet) mod 255;
+
+      if KeyPos < KeyLen then
+        Inc(KeyPos)
+      else
+        KeyPos := 1;
+
+      SrcAsc := SrcAsc xor Ord(Key[KeyPos]);
+      Dest := Dest + Format('%1.2x', [SrcAsc]);
+      OffSet := SrcAsc;
+    end;
+  end
+  else if (Action = UpperCase('D')) then
+  begin
+    OffSet := StrToInt('$' + Copy(Src, 1, 2));
+    SrcPos := 3;
+
+    repeat
+      SrcAsc := StrToInt('$' + Copy(Src, SrcPos, 2));
+
+      if KeyPos < KeyLen then
+        Inc(KeyPos)
+      else
+        KeyPos := 1;
+
+      TmpSrcAsc := SrcAsc xor Ord(Key[KeyPos]);
+
+      if TmpSrcAsc <= OffSet then
+        TmpSrcAsc := 255 + TmpSrcAsc - OffSet
+      else
+        TmpSrcAsc := TmpSrcAsc - OffSet;
+
+      Dest := Dest + Chr(TmpSrcAsc);
+      OffSet := SrcAsc;
+      Inc(SrcPos, 2);
+    until (SrcPos >= Length(Src));
+  end;
+
+  Result := Dest;
+Fim:
+end;
+
+function TServiceAutenticacao.login(AUsuario, ASenha: String): Boolean;
+var
+  LFDQuery: TFDQuery;
+  LSenhaBancoCriptografada: String;
+  LSenhaBancoDescriptografada: String;
+begin
+  Result := False;
+  LFDQuery := TFDQuery.Create(nil);
+
+  try
+    try
+      LFDQuery.Connection := Connection;
+
+      LFDQuery.SQL.Text :=
+        'SELECT senha_usr ' +
+        'FROM usuarios ' +
+        'WHERE login_usr = :login ';
+
+      LFDQuery.ParamByName('login').AsString := AUsuario;
+
+      LFDQuery.Open;
+
+      if LFDQuery.IsEmpty then
+        Exit(False);
+
+      LSenhaBancoCriptografada :=
+        LFDQuery.FieldByName('senha_usr').AsString;
+
+      LSenhaBancoDescriptografada :=
+        Cript('D', LSenhaBancoCriptografada);
+
+      Result := SameText(LSenhaBancoDescriptografada, ASenha);
+
+    except
+      on E: Exception do
+        raise EHorseException.New
+          .Error('Erro ao autenticar usuário: ' + E.Message)
+          .code(500);
+    end;
+  finally
+    LFDQuery.Free;
+  end;
+end;
+
+end.
+

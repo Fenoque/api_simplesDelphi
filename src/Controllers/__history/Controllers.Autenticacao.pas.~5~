@@ -1,0 +1,69 @@
+unit Controllers.Autenticacao;
+
+interface
+
+uses
+System.Generics.Collections,
+System.JSON,
+JOSE.Core.JWT,
+JOSE.Core.Builder,
+Horse,
+Service.Produtos,
+System.SysUtils,
+Service.Autenticacao;
+
+type
+  TControllerAutenticacao = class
+
+  class procedure Autenticacao(ARequest: THorseRequest; AResponse: THorseResponse);
+
+  public
+  class procedure Registry;
+
+end;
+
+implementation
+
+{ TControllerAutenticacao }
+
+class procedure TControllerAutenticacao.Autenticacao(ARequest: THorseRequest;
+  AResponse: THorseResponse);
+var
+   LServiceAutenticao: TServiceAutenticao;
+   LBody: TJSONObject;
+   LUsuario: String;
+   LSenha: String;
+   LToken: TJWT;
+   isLogged: Boolean;
+begin
+  LBody := ARequest.Body<TJSONObject>;
+
+  LUsuario := LBody.GetValue<string>('usuario');
+  LSenha := LBody.GetValue<string>('senha');
+  LServiceAutenticao := TServiceAutenticao.Create;
+  LToken := TJWT.Create;
+  try
+    isLogged :=  LServiceAutenticao.login(LUsuario, LSenha);
+    if(isLogged) then
+    begin
+      LToken.Claims.Issuer := 'API-MultSistem';
+      LToken.Claims.Subject := 'Enoque';
+      LToken.Claims.Expiration := Now + 1;
+      AResponse.Send(TJSONObject.Create(TJSONPair.Create('token', TJOSE.SHA256CompactToken('123098765', LToken))));
+    end
+    else
+    begin
+      AResponse.Send('usuário ou senha inválidos').Status(401);
+    end;
+  finally
+    FreeAndNil(LServiceAutenticao);
+    FreeAndNil(LToken);
+  end;
+end;
+
+class procedure TControllerAutenticacao.Registry;
+begin
+  THorse.Post('/login', Autenticacao);
+end;
+
+end.

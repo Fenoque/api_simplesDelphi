@@ -21,7 +21,8 @@ uses
   FireDAC.Phys.FB,
   FireDAC.Phys.PG,
   Data.DB,
-  FireDAC.Stan.Intf, Horse;
+  FireDAC.Stan.Intf,
+  Horse;
 
 type
   TServiceBase = class

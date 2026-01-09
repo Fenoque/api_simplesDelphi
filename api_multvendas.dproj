@@ -187,6 +187,8 @@
         <DCCReference Include="src\Controllers\Controllers.Produtos.pas"/>
         <DCCReference Include="src\Services\Service.Base.pas"/>
         <DCCReference Include="src\Services\Service.Produtos.pas"/>
+        <DCCReference Include="src\Controllers\Controllers.Autenticacao.pas"/>
+        <DCCReference Include="src\Services\Service.Autenticacao.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

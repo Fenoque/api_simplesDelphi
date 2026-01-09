@@ -1,0 +1,309 @@
+unit Unit1;
+
+interface
+
+implementation
+
+end.
+
+
+
+
+
+
+///////////////////pra frescar
+// unit Controller.Autenticacao.pas
+unit Controller.Autenticacao;
+
+interface
+
+uses
+  Horse,
+  Horse.JWT,
+  Horse.Jhonson,
+  System.JSON,
+  System.SysUtils,
+  Service.Autenticacao;
+
+type
+  TControllerAutenticacao = class
+  private
+    class procedure Login(Req: THorseRequest; Res: THorseResponse);
+    class procedure ValidarToken(Req: THorseRequest; Res: THorseResponse);
+  public
+    class procedure Registry;
+  end;
+
+implementation
+
+{ TControllerAutenticacao }
+
+class procedure TControllerAutenticacao.Registry;
+begin
+  // Rota pública - login
+  THorse.Post('/login', Login);
+
+  // Rota protegida - exemplo de validação de token
+  THorse.Get('/validar-token', ValidarToken);
+end;
+
+class procedure TControllerAutenticacao.Login(Req: THorseRequest; Res: THorseResponse);
+var
+  LBody: TJSONObject;
+  LUsuario, LSenha: string;
+  LToken: string;
+  LUserData: TJSONObject;
+begin
+  try
+    // Recebe dados do login
+    LBody := Req.Body<TJSONObject>;
+
+    LUsuario := LBody.GetValue<string>('usuario');
+    LSenha := LBody.GetValue<string>('senha');
+
+    // Valida credenciais
+    LUserData := TServiceAutenticacao.ValidarLogin(LUsuario, LSenha);
+
+    if Assigned(LUserData) then
+    begin
+      // Gera token JWT
+      LToken := TServiceAutenticacao.GerarToken
+      (LUsuario, LUserData.GetValue<integer>('id_usuario'));
+
+      // Retorna sucesso com token
+      Res.Send<TJSONObject>(
+        TJSONObject.Create
+          .AddPair('token', LToken)
+          .AddPair('usuario', LUserData.Clone as TJSONObject)
+      ).Status(THTTPStatus.OK);
+    end
+    else
+    begin
+      // Credenciais inválidas
+      Res.Send<TJSONObject>(
+        TJSONObject.Create
+          .AddPair('erro', 'Usuário ou senha inválidos')
+      ).Status(THTTPStatus.Unauthorized);
+    end;
+
+  except
+    on E: Exception do
+    begin
+      Res.Send<TJSONObject>(
+        TJSONObject.Create
+          .AddPair('erro', E.Message)
+      ).Status(THTTPStatus.BadRequest);
+    end;
+  end;
+end;
+
+class procedure TControllerAutenticacao.ValidarToken(Req: THorseRequest; Res: THorseResponse);
+begin
+  // Se chegou aqui, o token é válido (middleware JWT já validou)
+  Res.Send<TJSONObject>(
+    TJSONObject.Create
+      .AddPair('mensagem', 'Token válido')
+      .AddPair('usuario', Req.Session<TJSONObject>.GetValue<string>('username'))
+  ).Status(THTTPStatus.OK);
+end;
+
+end.
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+// unit Service.Autenticacao.pas
+unit Service.Autenticacao;
+
+interface
+
+uses
+  System.JSON,
+  System.SysUtils,
+  FireDAC.Comp.Client,
+  JOSE.Core.JWT,
+  JOSE.Core.Builder,
+  JOSE.Types.JSON;
+
+type
+  TServiceAutenticacao = class
+  private
+    class function CriptografarSenha(const Senha: string): string;
+    class function DescriptografarSenha(const SenhaCriptografada: string): string;
+  public
+    class function ValidarLogin(const Usuario, Senha: string): TJSONObject;
+    class function GerarToken(const Usuario: string; IDUsuario: Integer): string;
+  end;
+
+implementation
+
+uses
+  Service.Base;
+
+{ TServiceAutenticacao }
+
+// Sua função de criptografia (mantive igual)
+class function TServiceAutenticacao.CriptografarSenha(const Senha: string): string;
+Label Fim;
+var
+  KeyLen,
+  KeyPos,
+  SrcPos,
+  SrcAsc,
+  TmpSrcAsc,
+  Range,
+  OffSet : Integer;
+  Dest,
+  Key : string;
+begin
+  if (Senha = '') then
+    begin
+      Result:= '';
+      Goto Fim;
+    end;
+  Key := 'YUQL23KL23DF90WI5E1JAS467NMCXXL6JAOAUWWMCL0AOMM4A4VZYW9KHJUI2347EJHJKDF3424SKL K3LAKDJSL9RTIKJ';
+  Dest := '';
+  KeyLen := Length(Key);
+  KeyPos := 0;
+  Range := 256;
+
+  Randomize;
+  OffSet := Random(Range);
+  Dest := Format('%1.2x',[OffSet]);
+
+  for SrcPos := 1 to Length(Senha) do
+  begin
+    SrcAsc := (Ord(Senha[SrcPos]) + OffSet) Mod 255;
+    if KeyPos < KeyLen then
+      KeyPos := KeyPos + 1
+    else KeyPos := 1;
+    SrcAsc := SrcAsc Xor Ord(Key[KeyPos]);
+    Dest := Dest + Format('%1.2x',[SrcAsc]);
+    OffSet := SrcAsc;
+  end;
+
+  Result:= Dest;
+  Fim:
+end;
+
+class function TServiceAutenticacao.DescriptografarSenha(const SenhaCriptografada: string): string;
+Label Fim;
+var
+  KeyLen,
+  KeyPos,
+  SrcPos,
+  SrcAsc,
+  TmpSrcAsc,
+  Range,
+  OffSet : Integer;
+  Dest,
+  Key : string;
+begin
+  if (SenhaCriptografada = '') then
+    begin
+      Result:= '';
+      Goto Fim;
+    end;
+  Key := 'YUQL23KL23DF90WI5E1JAS467NMCXXL6JAOAUWWMCL0AOMM4A4VZYW9KHJUI2347EJHJKDF3424SKL K3LAKDJSL9RTIKJ';
+  Dest := '';
+  KeyLen := Length(Key);
+  KeyPos := 0;
+  Range := 256;
+
+  OffSet := StrToInt('$'+ copy(SenhaCriptografada,1,2));
+  SrcPos := 3;
+  repeat
+    SrcAsc := StrToInt('$'+ copy(SenhaCriptografada,SrcPos,2));
+  if (KeyPos < KeyLen) then
+    KeyPos := KeyPos + 1
+  else KeyPos := 1;
+    TmpSrcAsc := SrcAsc Xor Ord(Key[KeyPos]);
+  if TmpSrcAsc <= OffSet then
+     TmpSrcAsc := 255 + TmpSrcAsc - OffSet
+  else
+    TmpSrcAsc := TmpSrcAsc - OffSet;
+  Dest := Dest + Chr(TmpSrcAsc);
+  OffSet := SrcAsc;
+  SrcPos := SrcPos + 2;
+  until (SrcPos >= Length(SenhaCriptografada));
+
+  Result:= Dest;
+  Fim:
+end;
+
+class function TServiceAutenticacao.ValidarLogin(const Usuario, Senha: string): TJSONObject;
+var
+  LFDQuery: TFDQuery;
+  LSenhaCriptografada: string;
+  LSenhaBanco: string;
+begin
+  Result := nil;
+  LFDQuery := TFDQuery.Create(nil);
+
+  try
+    LFDQuery.Connection := TServiceBase.Connection;
+
+    // Busca usuário pelo login
+    LFDQuery.SQL.Text :=
+      'SELECT id_usuario, usuario, senha, nome, email, ativo ' +
+      'FROM usuarios ' +
+      'WHERE usuario = :usuario ' +
+      'AND ativo = ''S''';
+
+    LFDQuery.ParamByName('usuario').AsString := Usuario;
+    LFDQuery.Open;
+
+    if not LFDQuery.IsEmpty then
+    begin
+      // Obtém senha do banco
+      LSenhaBanco := LFDQuery.FieldByName('senha').AsString;
+
+      // Criptografa a senha fornecida para comparar
+      LSenhaCriptografada := CriptografarSenha(Senha);
+
+      // Compara as senhas criptografadas
+      if LSenhaCriptografada = LSenhaBanco then
+      begin
+        // Login válido - retorna dados do usuário (sem senha)
+        Result := TJSONObject.Create
+          .AddPair('id_usuario', TJSONNumber.Create(LFDQuery.FieldByName('id_usuario').AsInteger))
+          .AddPair('usuario', LFDQuery.FieldByName('usuario').AsString)
+          .AddPair('nome', LFDQuery.FieldByName('nome').AsString)
+          .AddPair('email', LFDQuery.FieldByName('email').AsString);
+      end;
+    end;
+
+  finally
+    LFDQuery.Free;
+  end;
+end;
+
+class function TServiceAutenticacao.GerarToken(const Usuario: string; IDUsuario: Integer): string;
+var
+  LJWT: TJWT;
+  LClaims: TJSONObject;
+begin
+  LJWT := TJWT.Create;
+  try
+    // Configura claims (dados do token)
+    LClaims := TJSONObject.Create
+      .AddPair('sub', Usuario)
+      .AddPair('id', TJSONNumber.Create(IDUsuario))
+      .AddPair('iss', 'API_MULTVENDAS')
+      .AddPair('aud', 'CLIENT_APP');
+
+    LJWT.Claims.JSON := LClaims;
+
+    // Define tempo de expiração (ex: 24 horas)
+    LJWT.Claims.Expiration := Now + 1; // 1 dia
+
+    // Gera token com chave secreta
+    Result := TJOSE.SHA256CompactToken('SUA_CHAVE_SECRETA_AQUI_ALTERE_ISSO', LJWT);
+
+  finally
+    LJWT.Free;
+  end;
+end;
+
+end.
