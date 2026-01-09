@@ -1,0 +1,45 @@
+unit Controllers.Produtos;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.JSON,
+  Horse,
+  Service.Produtos,
+  System.SysUtils;
+
+type
+  TControllerProdutos = class
+
+  class procedure ObtemProdutos(ARequest: THorseRequest; AResponse: THorseResponse);
+
+  public
+    class procedure Registry;
+
+end;
+
+implementation
+
+{ TControllerProdutos }
+
+class procedure TControllerProdutos.ObtemProdutos(ARequest: THorseRequest;
+  AResponse: THorseResponse);
+var
+ LServiceProdutos: TServiceProdutos;
+begin
+  LServiceProdutos := TServiceProdutos.Create;
+  try
+    LServiceProdutos.ListarProdutos(ARequest.Query.Dictionary);
+    AResponse.Send(LServiceProdutos.JSONArray);
+  finally
+    FreeAndNil(LServiceProdutos);
+  end;
+end;
+
+class procedure TControllerProdutos.Registry;
+begin
+  THorse.Get('/produtos', ObtemProdutos);
+end;
+
+end.

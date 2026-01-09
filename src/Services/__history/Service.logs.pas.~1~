@@ -1,0 +1,115 @@
+unit Service.logs;
+
+interface
+
+uses
+  Horse,
+  Horse.Commons,
+  System.SysUtils,
+  System.DateUtils;
+
+type
+  THorseLoggerConsole = class
+  private
+    class function GetDuration(const AStartTime: TDateTime): string;
+  public
+    class procedure OnListen;
+    class procedure OnRequest(Req: THorseRequest; Res: THorseResponse);
+    class procedure OnResponse(Req: THorseRequest; Res: THorseResponse);
+    class procedure OnError(Req: THorseRequest; Res: THorseResponse; Error: Exception);
+  end;
+
+implementation
+
+{ THorseLoggerConsole }
+
+class function THorseLoggerConsole.GetDuration(const AStartTime: TDateTime): string;
+var
+  LDuration: Int64;
+begin
+  LDuration := MilliSecondsBetween(Now, AStartTime);
+  Result := Format('%d ms', [LDuration]);
+end;
+
+class procedure THorseLoggerConsole.OnListen;
+begin
+  Writeln('');
+  Writeln('========================================');
+  Writeln(Format('API Iniciada: %s', [FormatDateTime('dd/mm/yyyy hh:nn:ss', Now)]));
+  Writeln(Format('Host: %s', [THorse.Host]));
+  Writeln(Format('Porta: %d', [THorse.Port]));
+  Writeln('========================================');
+  Writeln('');
+end;
+
+class procedure THorseLoggerConsole.OnRequest(Req: THorseRequest; Res: THorseResponse);
+begin
+  // Armazena o horário de início no contexto da requisição
+  Req.Session['start_time'] := Now;
+
+  Writeln(Format('[%s] %s %s',
+    [FormatDateTime('hh:nn:ss', Now),
+     Req.RawWebRequest.Method,
+     Req.RawWebRequest.PathInfo]));
+end;
+
+class procedure THorseLoggerConsole.OnResponse(Req: THorseRequest; Res: THorseResponse);
+var
+  LStartTime: TDateTime;
+  LMethod: string;
+  LPath: string;
+  LStatusCode: Integer;
+  LDuration: string;
+begin
+  LMethod := Req.RawWebRequest.Method;
+  LPath := Req.RawWebRequest.PathInfo;
+  LStatusCode := Res.StatusCode;
+
+  // Recupera o horário de início
+  if Req.Session.ContainsKey('start_time') then
+    LStartTime := TDateTime(Req.Session['start_time'])
+  else
+    LStartTime := Now;
+
+  LDuration := GetDuration(LStartTime);
+
+  // Cores para terminal (opcional)
+  if LStatusCode >= 200 then
+    Write(#27'[32m'); // Verde para sucesso
+  if LStatusCode >= 400 then
+    Write(#27'[33m'); // Amarelo para client error
+  if LStatusCode >= 500 then
+    Write(#27'[31m'); // Vermelho para server error
+
+  Writeln(Format('[%s] %s %s -> %d (%s)',
+    [FormatDateTime('hh:nn:ss', Now),
+     LMethod,
+     LPath,
+     LStatusCode,
+     LDuration]));
+
+  Write(#27'[0m'); // Reset cor
+end;
+
+class procedure THorseLoggerConsole.OnError(Req: THorseRequest; Res: THorseResponse; Error: Exception);
+var
+  LMethod: string;
+  LPath: string;
+  LErrorMessage: string;
+begin
+  LMethod := Req.RawWebRequest.Method;
+  LPath := Req.RawWebRequest.PathInfo;
+  LErrorMessage := Error.Message;
+
+  Write(#27'[31m'); // Vermelho para erro
+
+  Writeln(Format('[%s] ERRO: %s %s -> %s',
+    [FormatDateTime('hh:nn:ss', Now),
+     LMethod,
+     LPath,
+     LErrorMessage]));
+
+  Write(#27'[0m'); // Reset cor
+end;
+
+end.
