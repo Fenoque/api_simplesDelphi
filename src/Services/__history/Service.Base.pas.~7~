@@ -1,0 +1,79 @@
+unit Service.Base;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+  System.JSON,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Phys,
+  FireDAC.Stan.Option,
+  FireDAC.DApt,
+  FireDAC.Stan.Async,
+  FireDAC.Comp.Client,
+  FireDAC.Phys.FBDef,
+  FireDAC.Phys.PGDef,
+  FireDAC.Stan.Pool,
+  FireDAC.Phys.FB,
+  FireDAC.Phys.PG,
+  Data.DB,
+  FireDAC.Stan.Intf,
+  Horse;
+
+type
+  TServiceBase = class
+  protected
+    FConnection:  TFDConnection;
+    FJSONArray: TJSONArray;
+    FJSONObject: TJSONObject;
+  public
+    property Connection: TFDConnection read FConnection;
+    property JSONArray: TJSONArray read FJSONArray write FJSONArray;
+    property JSONObject: TJSONObject read FJSONObject write FJSONObject;
+    constructor Create; overload;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+{ TServiceBase }
+
+constructor TServiceBase.Create;
+var
+  LOndeEstou: String;
+begin
+
+  LOndeEstou := 'O'; //E||O
+
+   if LOndeEstou = 'O' then
+        LOndeEstou := 'C:\Users\Usuario\Desktop\Mult_Estudos\BD\files.fdb'
+   else
+        LOndeEstou := 'C:\Users\Usuario\Desktop\multestudos\BD\FILES.FDB';
+
+
+
+  try
+    FConnection := TFDConnection.Create(nil);
+    FConnection.DriverName := 'FB';
+    FConnection.Params.AddPair('Server', 'LOCALHOST');
+    FConnection.Params.AddPair('Port', '3050');
+    FConnection.Params.Database := 'C:\Users\Usuario\Desktop\multestudos\BD\FILES.FDB';
+    FConnection.Params.UserName := 'SYSDBA';
+    FConnection.Params.Password := 'masterkey';
+    FConnection.Connected := True;
+  except
+    raise EHorseException.New.Error('Ocorreu um erro no servidor!').Code(100);
+  end;
+end;
+
+destructor TServiceBase.Destroy;
+begin
+  FreeAndNil(FConnection);
+  inherited;
+end;
+
+end.

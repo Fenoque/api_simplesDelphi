@@ -1,0 +1,766 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Scratch Pad
+meta:
+  id: wrk_scratchpad
+  created: 1764247773110
+  modified: 1764247773110
+  description: ""
+collection:
+  - name: api-treinamento(base)
+    meta:
+      id: fld_f19f0b48135f46d388b4ef4ff523a02d
+      created: 1764248150077
+      modified: 1764348263115
+      sortKey: -1764262412499
+      description: ""
+    children:
+      - url: "{{ _.base.url }}/login/"
+        name: gera token
+        meta:
+          id: req_8bcc642693044a3f8eaeca193b23ea86
+          created: 1764248159579
+          modified: 1767988818542
+          isPrivate: false
+          description: ""
+          sortKey: -1764333773662
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"usuario" : "MASTER",
+            	"senha": "m@st3r"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - name: cores
+        meta:
+          id: fld_33fca484e1cc456faf4755e73fefea27
+          created: 1764262412299
+          modified: 1764333778758
+          sortKey: -1764333773562
+          description: ""
+        children:
+          - url: "{{ _.base.url }}/cores"
+            name: listaCores
+            meta:
+              id: req_51fa06c861734d4eab5c731d7e32b56d
+              created: 1764333818794
+              modified: 1764334139691
+              isPrivate: false
+              description: ""
+              sortKey: -1764333818794
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/cores/2"
+            name: obtemCor
+            meta:
+              id: req_a9376b41f75e45f6819c160c8c31ef6c
+              created: 1764334166074
+              modified: 1764334431024
+              isPrivate: false
+              description: ""
+              sortKey: -1764333796228
+            method: GET
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/cores"
+            name: CriaCor
+            meta:
+              id: req_a9f8bc1c814a414c9f434b3e9549b1d1
+              created: 1764334452450
+              modified: 1764343235420
+              isPrivate: false
+              description: ""
+              sortKey: -1764333784945
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul branco",
+                	"codigo" : "654"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/cores/9"
+            name: alteraCor
+            meta:
+              id: req_c3c4d76d95864c598e1d127f44a20528
+              created: 1764337851648
+              modified: 1764343341259
+              isPrivate: false
+              description: ""
+              sortKey: -1764333779303.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul castanho"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: usuarios
+        meta:
+          id: fld_96df2b6bad2b444a8a369bf7514ac22b
+          created: 1764344038456
+          modified: 1764344038456
+          sortKey: -1764298093030.5
+          description: ""
+        children:
+          - url: "{{ _.base.url }}/usuarios"
+            name: listaUsuarios
+            meta:
+              id: req_28d626595329471c99a4ba9d8d73b984
+              created: 1764344038458
+              modified: 1764345834812
+              isPrivate: false
+              description: ""
+              sortKey: -1764333818794
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios"
+            name: CriaUsuario
+            meta:
+              id: req_33a82dcec99d40dfaa4afd484a48a0c5
+              created: 1764344038460
+              modified: 1764345872995
+              isPrivate: false
+              description: ""
+              sortKey: -1764333784945
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul",
+                	"senha" : "123"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios/1"
+            name: obtemUsuarios
+            meta:
+              id: req_8ed0a26ed0ee46d78c38554b95cd917b
+              created: 1764344038460
+              modified: 1764348237169
+              isPrivate: false
+              description: ""
+              sortKey: -1764333796228
+            method: GET
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios/2"
+            name: alteraUsuario
+            meta:
+              id: req_1d2deb2e6df945ce839447b3b0e0af1c
+              created: 1764344038461
+              modified: 1764346397283
+              isPrivate: false
+              description: ""
+              sortKey: -1764333779303.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul master"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+  - name: outras coisas
+    meta:
+      id: fld_d50498b8ffb74452a3aa40f67a9f92a8
+      created: 1764333692547
+      modified: 1764333740822
+      sortKey: -1764255281188
+      description: ""
+    children:
+      - url: https://pokeapi.co/api/v2/pokemon
+        name: New Request
+        meta:
+          id: req_d799bb9304d3420283640a9a14407cce
+          created: 1764248220966
+          modified: 1764333705743
+          isPrivate: false
+          description: ""
+          sortKey: -1764333705718
+        method: GET
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            	"usuario" : "master",
+            	"token": {% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86', 'b64::JFt0b2tlbl0=::46b', 'never', 60 %}
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://pokeapi.co/api/v2/pokemon/2/
+        name: New Request
+        meta:
+          id: req_675d4a8901f2432aba658f6a8427bfff
+          created: 1764270052588
+          modified: 1764333720441
+          isPrivate: false
+          description: ""
+          sortKey: -1764333705818
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: api-multvendas
+    meta:
+      id: fld_107b9148d42545ef940b9f02170c8d22
+      created: 1764359502232
+      modified: 1764359514605
+      sortKey: -1764258846843.5
+      description: ""
+    children:
+      - url: "{{ _.base.url }}/login/"
+        name: gera token
+        meta:
+          id: req_71024d2a25d745c5b91efe584f0f5849
+          created: 1764359502244
+          modified: 1764359502244
+          isPrivate: false
+          description: ""
+          sortKey: -1764333773662
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"usuario" : "master",
+            	"senha": "123456"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            disabled: false
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - name: Produ
+        meta:
+          id: fld_a0bc8804b4034f04b498d3d3beae4974
+          created: 1764359502248
+          modified: 1767872680933
+          sortKey: -1764333773562
+          description: ""
+        children:
+          - url: "{{ _.base.url }}/produtos"
+            name: listaProdutos
+            meta:
+              id: req_f2d673f081db448f8d94532fe1f5d54c
+              created: 1764359502250
+              modified: 1766171097140
+              isPrivate: false
+              description: ""
+              sortKey: -1764333818794
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: true
+              token: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/produtos/30051"
+            name: obtemProduto
+            meta:
+              id: req_107addb211e843119e4db6212c1f3194
+              created: 1764359502251
+              modified: 1767965653971
+              isPrivate: false
+              description: ""
+              sortKey: -1764333796228
+            method: GET
+            parameters:
+              - name: id-prd
+                value: "10"
+                description: ""
+                disabled: true
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: true
+              token: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/produtos"
+            name: CriaProduto
+            meta:
+              id: req_f25bf5e482f843819cd2888c8fd2a843
+              created: 1764359502252
+              modified: 1767961051153
+              isPrivate: false
+              description: ""
+              sortKey: -1764333784945
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nome": "Produto Teste 4",
+                	"preco" : 25.35
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: true
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/produto/30051"
+            name: alteraProduto
+            meta:
+              id: req_6af2a5d082414651bf3ccae77266c084
+              created: 1764359502254
+              modified: 1767965643345
+              isPrivate: false
+              description: ""
+              sortKey: -1764333779303.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Produto Teste 444"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: true
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: usuarios
+        meta:
+          id: fld_579fd3f2d9e34c9097dd1430729cb479
+          created: 1764359502255
+          modified: 1764359502255
+          sortKey: -1764298093030.5
+          description: ""
+        children:
+          - url: "{{ _.base.url }}/usuarios"
+            name: listaUsuarios
+            meta:
+              id: req_0a8659ea6da04388b9bb4cdf03962237
+              created: 1764359502256
+              modified: 1764359502256
+              isPrivate: false
+              description: ""
+              sortKey: -1764333818794
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios"
+            name: CriaUsuario
+            meta:
+              id: req_60a6ce7bc6954659bf510f4e728b2959
+              created: 1764359502258
+              modified: 1764359502258
+              isPrivate: false
+              description: ""
+              sortKey: -1764333784945
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul",
+                	"senha" : "123"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios/1"
+            name: obtemUsuarios
+            meta:
+              id: req_321ba5d13303458b843fcd913a4bcbe9
+              created: 1764359502259
+              modified: 1764359502259
+              isPrivate: false
+              description: ""
+              sortKey: -1764333796228
+            method: GET
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base.url }}/usuarios/2"
+            name: alteraUsuario
+            meta:
+              id: req_d02091d4728240fd918bf303ad9b3da0
+              created: 1764359502260
+              modified: 1764359502260
+              isPrivate: false
+              description: ""
+              sortKey: -1764333779303.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome" : "azul master"
+                }
+            parameters:
+              - name: id-cor
+                value: "1"
+                description: ""
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: "{% response 'body', 'req_8bcc642693044a3f8eaeca193b23ea86',
+                'b64::JFt0b2tlbl0=::46b', 'when-expired', 600 %}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1764247999232
+    modified: 1764247999232
+environments:
+  name: Base Environment
+  meta:
+    id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1764247999229
+    modified: 1764262484091
+    isPrivate: false
+  data:
+    base:
+      url: http://localhost:9000

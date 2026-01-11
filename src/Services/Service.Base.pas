@@ -43,13 +43,25 @@ implementation
 { TServiceBase }
 
 constructor TServiceBase.Create;
+var
+  LOndeEstou: String;
 begin
+
+  LOndeEstou := 'O'; //E||O
+
+   if LOndeEstou = 'O' then
+        LOndeEstou := 'C:\Users\Usuario\Desktop\Mult_Estudos\BD\files.fdb'
+   else
+        LOndeEstou := 'C:\Users\Usuario\Desktop\multestudos\BD\FILES.FDB';
+
+
+
   try
     FConnection := TFDConnection.Create(nil);
     FConnection.DriverName := 'FB';
     FConnection.Params.AddPair('Server', 'LOCALHOST');
     FConnection.Params.AddPair('Port', '3050');
-    FConnection.Params.Database := 'C:\Users\Usuario\Desktop\multestudos\BD\FILES.FDB';
+    FConnection.Params.Database := LOndeEstou;
     FConnection.Params.UserName := 'SYSDBA';
     FConnection.Params.Password := 'masterkey';
     FConnection.Connected := True;
