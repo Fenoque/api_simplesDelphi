@@ -9,6 +9,7 @@
 		"github.com/hashload/handle-exception": "^0.2.0",
 		"github.com/hashload/horse": "^3.1.9",
 		"github.com/hashload/horse-basic-auth": "^1.2.5",
+		"github.com/hashload/horse-cors": "^1.0.7",
 		"github.com/hashload/horse-jwt": "^2.0.18",
 		"github.com/hashload/jhonson": "^1.2.1",
 		"github.com/viniciussanchez/dataset-serialize": "^v2.5.9"

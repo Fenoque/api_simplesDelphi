@@ -1,4 +1,4 @@
-program api_multvendas;
+﻿program api_multvendas;
 
 {$APPTYPE CONSOLE}
 
@@ -13,7 +13,9 @@ uses
   System.SysUtils,
   Controllers.Produtos in 'src\Controllers\Controllers.Produtos.pas',
   Service.Base in 'src\Services\Service.Base.pas',
-  Service.Produtos in 'src\Services\Service.Produtos.pas';
+  Service.Produtos in 'src\Services\Service.Produtos.pas',
+  Controllers.Autenticacao in 'src\Controllers\Controllers.Autenticacao.pas',
+  Service.Autenticacao in 'src\Services\Service.Autenticacao.pas';
 
 begin
 
@@ -24,18 +26,19 @@ begin
 
   THorse.Use(Jhonson());
   THorse.Use(HandleException);
-//  THorse.Use(HorseJWT('123098765',
-//                                THorseJWTConfig.New
-//                                        .SkipRoutes(['/login'])));
 
-TControllerProdutos.Registry;
-//  TControllerAutenticacao.Registry;
+  THorse.Use(HorseJWT('123098765',
+                                THorseJWTConfig.New
+                                        .SkipRoutes(['/login'])));
+
+  TControllerProdutos.Registry;
+  TControllerAutenticacao.Registry;
 //  TControllerUsuarios.Registry;
 
   THorse.Listen(9000,
                 procedure
                 begin
-                  WriteLn(Format('API est� funcionando em %s:%d', [THorse.Host, THorse.Port]));
+                  WriteLn(Format('API está funcionando em %s:%d', [THorse.Host, THorse.Port]));
                   WriteLn('Pressione ENTER para encerrar...');
                 end);
   Readln;

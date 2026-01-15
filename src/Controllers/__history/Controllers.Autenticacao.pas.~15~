@@ -29,7 +29,7 @@ implementation
 class procedure TControllerAutenticacao.Autenticacao(ARequest: THorseRequest;
   AResponse: THorseResponse);
 var
-   LServiceAutenticao: TServiceAutenticao;
+   LServiceAutenticao: TServiceAutenticacao;
    LBody: TJSONObject;
    LUsuario: String;
    LSenha: String;
@@ -40,7 +40,7 @@ begin
 
   LUsuario := LBody.GetValue<string>('usuario');
   LSenha := LBody.GetValue<string>('senha');
-  LServiceAutenticao := TServiceAutenticao.Create;
+  LServiceAutenticao := TServiceAutenticacao.Create;
   LToken := TJWT.Create;
   try
     isLogged :=  LServiceAutenticao.login(LUsuario, LSenha);
@@ -53,7 +53,7 @@ begin
     end
     else
     begin
-      AResponse.Send('usuário ou senha inválidos').Status(401);
+      AResponse.Send('usuário ou senha inválidos' ).Status(401);
     end;
   finally
     FreeAndNil(LServiceAutenticao);

@@ -8,7 +8,6 @@ uses
   Horse,
   Horse.Jhonson,
   Horse.JWT,
-  Horse.CORS,
   Horse.HandleException,
   System.JSON,
   System.SysUtils,
@@ -25,24 +24,7 @@ begin
     ReportMemoryLeaksOnShutdown := True;
   {$ENDIF}
 
-
-
-//  THorse
-//    .Use(CORS)
-//    .Use(
-//      CORSConfig
-//        .AllowedOrigin('*') // desenvolvimento
-//        .AllowedHeaders('*')
-//        .AllowedMethods('GET,POST,PUT,DELETE,OPTIONS')
-//    );
-
-
-
-
-
-
   THorse.Use(Jhonson());
-  THorse.Use(CORS);
   THorse.Use(HandleException);
 
   THorse.Use(HorseJWT('123098765',
@@ -53,7 +35,7 @@ begin
   TControllerAutenticacao.Registry;
 //  TControllerUsuarios.Registry;
 
-  THorse.Listen(9000,
+  THorse.Listen(63611, //9000,
                 procedure
                 begin
                   WriteLn(Format('API está funcionando em %s:%d', [THorse.Host, THorse.Port]));
