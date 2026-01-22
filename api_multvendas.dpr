@@ -31,14 +31,10 @@ begin
 //    .Use(CORS)
 //    .Use(
 //      CORSConfig
-//        .AllowedOrigin('*') // desenvolvimento
+//        .AllowedOrigin('*')
 //        .AllowedHeaders('*')
 //        .AllowedMethods('GET,POST,PUT,DELETE,OPTIONS')
-//    );
-
-
-
-
+//  );
 
 
   THorse.Use(Jhonson());

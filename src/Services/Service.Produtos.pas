@@ -172,6 +172,12 @@ begin
 
       LFDQuery.SQL.Text :=  'SELECT id_prd AS codigo, descricao_prd AS descricao FROM produtos WHERE id_prd IS NOT NULL ';
 
+      if(AParametros.ContainsKey('descricao'))then
+      begin
+        LFDQuery.SQL.Add('AND descricao_prd CONTAINING :descricao');
+        LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
+      end;
+
       LFDQuery.Open;
       JSONArray := LFDQuery.ToJSONArray;
     except

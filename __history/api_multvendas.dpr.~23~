@@ -1,0 +1,63 @@
+﻿program api_multvendas;
+
+{$APPTYPE CONSOLE}
+
+{$R *.res}
+
+uses
+  Horse,
+  Horse.Jhonson,
+  Horse.JWT,
+  Horse.CORS,
+  Horse.HandleException,
+  System.JSON,
+  System.SysUtils,
+  Controllers.Produtos in 'src\Controllers\Controllers.Produtos.pas',
+  Service.Base in 'src\Services\Service.Base.pas',
+  Service.Produtos in 'src\Services\Service.Produtos.pas',
+  Controllers.Autenticacao in 'src\Controllers\Controllers.Autenticacao.pas',
+  Service.Autenticacao in 'src\Services\Service.Autenticacao.pas';
+
+begin
+
+  {$IFDEF DEBUG}
+    IsConsole := False;
+    ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
+
+
+
+//  THorse
+//    .Use(CORS)
+//    .Use(
+//      CORSConfig
+//        .AllowedOrigin('*') // desenvolvimento
+//        .AllowedHeaders('*')
+//        .AllowedMethods('GET,POST,PUT,DELETE,OPTIONS')
+//    );
+
+
+
+
+
+
+  THorse.Use(Jhonson());
+  THorse.Use(CORS);
+  THorse.Use(HandleException);
+
+  THorse.Use(HorseJWT('123098765',
+                                THorseJWTConfig.New
+                                        .SkipRoutes(['/login'])));
+
+  TControllerProdutos.Registry;
+  TControllerAutenticacao.Registry;
+//  TControllerUsuarios.Registry;
+
+  THorse.Listen(9000,
+                procedure
+                begin
+                  WriteLn(Format('API está funcionando em %s:%d', [THorse.Host, THorse.Port]));
+                  WriteLn('Pressione ENTER para encerrar...');
+                end);
+  Readln;
+end.

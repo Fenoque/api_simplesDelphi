@@ -47,7 +47,7 @@ var
   LOndeEstou: String;
 begin
 
-  LOndeEstou := 'O'; //E||O
+  LOndeEstou := 'E'; //E||O
 
    if LOndeEstou = 'O' then
         LOndeEstou := 'C:\Users\Usuario\Desktop\Mult_Estudos\BD\files.fdb'
