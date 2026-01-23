@@ -178,6 +178,19 @@ begin
         LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
       end;
 
+      if (AParametros.ContainsKey('limit')) then
+      begin
+        LFDQuery.SQL.Add('OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY');
+        LFDQuery.ParamByName('limit').AsInteger := StrToIntDef(AParametros.Items['limit'], 5);
+      end;
+
+//      if(AParametros.ContainsKey('limit'))then
+//      begin
+//        LFDQuery.SQL.Add('AND max = :limit');
+//        LFDQuery.ParamByName('limit').AsString := AParametros.Items['limit'];
+//      end;
+
+
       LFDQuery.Open;
       JSONArray := LFDQuery.ToJSONArray;
     except
