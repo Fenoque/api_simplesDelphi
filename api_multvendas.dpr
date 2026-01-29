@@ -17,7 +17,8 @@ uses
   Service.Produtos in 'src\Services\Service.Produtos.pas',
   Controllers.Autenticacao in 'src\Controllers\Controllers.Autenticacao.pas',
   Service.Autenticacao in 'src\Services\Service.Autenticacao.pas',
-  Service.Clientes in 'src\Services\Service.Clientes.pas';
+  Service.Clientes in 'src\Services\Service.Clientes.pas',
+  Controllers.Clientes in 'src\Controllers\Controllers.Clientes.pas';
 
 begin
 
@@ -48,6 +49,7 @@ begin
 
   TControllerProdutos.Registry;
   TControllerAutenticacao.Registry;
+  TControllerClientes.Registry;
 //  TControllerUsuarios.Registry;
 
   THorse.Listen(9000,
