@@ -162,6 +162,7 @@ begin
     LFDQuery.ParamByName('sexo_pss').AsString := ABody.GetValue<string>('sexo_pss');
     LFDQuery.ParamByName('whatsapp_pss').AsString := ABody.GetValue<string>('whatsapp_pss');
     LFDQuery.ParamByName('data_nascimento_pss').AsDate := StrToDate(ABody.GetValue<string>('data_nascimento_pss'));
+    LFDQuery.ParamByName('id_pss').AsInteger := ABody.GetValue<Integer>('id_pss');
     LFDQuery.ExecSQL();
   except
     raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);

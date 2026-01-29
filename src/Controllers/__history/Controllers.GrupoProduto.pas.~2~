@@ -1,0 +1,26 @@
+unit Controllers.GrupoProduto;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.JSON,
+  Horse,
+  Service.GrupoProduto,
+  System.SysUtils;
+
+type
+  TControllerGrupoProdutos = class
+
+  class procedure ObtemGrupoProdutos(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure ObterGrupoProdutoPorId(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure AlterarGrupoProduto(ARequest: THorseRequest; AResponse: THorseResponse);
+
+  public
+    class procedure Registry;
+
+end;
+
+implementation
+
+end.

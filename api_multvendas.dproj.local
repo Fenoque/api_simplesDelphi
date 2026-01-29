@@ -21,6 +21,10 @@
     <Transaction>2026/01/28 16:04:13.000.547,C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\src\Services\Service.Clientes.pas</Transaction>
     <Transaction>2026/01/29 12:51:58.403,=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
     <Transaction>2026/01/29 12:52:20.352,C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\src\Controllers\Controllers.Clientes.pas=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/29 13:15:55.343,=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/29 13:16:15.863,C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\src\Services\Service.GrupoProduto.pas=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/29 13:49:23.722,=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/29 13:49:55.289,C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\src\Controllers\Controllers.GrupoProduto.pas=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="src"/>
@@ -28,10 +32,12 @@
     <File Path="src\Controllers\Controllers.Produtos.pas"/>
     <File Path="src\Controllers\Controllers.Autenticacao.pas"/>
     <File Path="src\Controllers\Controllers.Clientes.pas"/>
+    <File Path="src\Controllers\Controllers.GrupoProduto.pas"/>
     <File Path="src\Services"/>
     <File Path="src\Services\Service.Base.pas"/>
     <File Path="src\Services\Service.Produtos.pas"/>
     <File Path="src\Services\Service.Autenticacao.pas"/>
     <File Path="src\Services\Service.Clientes.pas"/>
+    <File Path="src\Services\Service.GrupoProduto.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

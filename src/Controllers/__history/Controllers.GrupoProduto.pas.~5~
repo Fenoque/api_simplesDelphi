@@ -1,0 +1,81 @@
+unit Controllers.GrupoProduto;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.JSON,
+  Horse,
+  Service.GrupoProduto,
+  System.SysUtils;
+
+type
+  TControllerGrupoProdutos = class
+
+  class procedure ObtemGrupoProdutos(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure ObterGrupoProdutoPorId(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure AlterarGrupoProduto(ARequest: THorseRequest; AResponse: THorseResponse);
+
+  public
+    class procedure Registry;
+
+end;
+
+implementation
+
+{ TControllerGrupoProdutos }
+
+class procedure TControllerGrupoProdutos.AlterarGrupoProduto(
+  ARequest: THorseRequest; AResponse: THorseResponse);
+var
+ LServiceGrupoProdutos: TServiceGrupoProduto;
+begin
+  LServiceGrupoProdutos := TServiceGrupoProduto.Create;
+  try
+    LServiceGrupoProdutos.EditarGrupoProduto(StrToInt(ARequest.Params['id-prd']),ARequest.Body<TJSONObject>);
+    AResponse.Send('Alterado com sucesso').Status(200);
+  finally
+    FreeAndNil(LServiceGrupoProdutos);
+  end;
+
+end;
+
+class procedure TControllerGrupoProdutos.ObtemGrupoProdutos(
+  ARequest: THorseRequest; AResponse: THorseResponse);
+var
+ LServiceGrupoProdutos: TServiceGrupoProduto;
+begin
+  LServiceGrupoProdutos := TServiceGrupoProduto.Create;
+  try
+    LServiceGrupoProdutos.ListarGrupoProduto(ARequest.Query.Dictionary);
+    AResponse.Send(LServiceGrupoProdutos.JSONArray);
+  finally
+    FreeAndNil(LServiceGrupoProdutos);
+  end;
+
+end;
+
+class procedure TControllerGrupoProdutos.ObterGrupoProdutoPorId(
+  ARequest: THorseRequest; AResponse: THorseResponse);
+var
+ LServiceGrupoProdutos: TServiceGrupoProduto;
+begin
+  LServiceGrupoProdutos := TServiceGrupoProduto.Create;
+   try
+      LServiceGrupoProdutos.LocalizarGrupoProdutoPorId(StrToInt(ARequest.Params['id-grp']));
+      AResponse.Send(LServiceGrupoProdutos.JSONObject).Status(200);
+    finally
+      FreeAndNil(LServiceGrupoProdutos);
+    end;
+
+end;
+
+class procedure TControllerGrupoProdutos.Registry;
+begin
+  THorse.Get('/grupoproduto', ObtemGrupoProdutos);
+  THorse.Get('/grupoproduto/:id-grp', ObterGrupoProdutoPorId);
+  THorse.Put('/grupoproduto/:id-grp', AlterarGrupoProduto);
+
+end;
+
+end.
