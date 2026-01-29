@@ -1,0 +1,87 @@
+unit Service.Clientes;
+
+interface
+
+uses
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  System.Generics.Collections;
+
+type
+  TServiceClientes = class(TServiceBase)
+  public
+    procedure ListarCliente(AParametros: TDictionary<string, string>);
+    procedure LocalizarClientePorId(AIdCliente: Integer);
+    procedure CadastrarCliente(ABody: TJSONObject);
+    procedure EditarCliente(AIdCliente: Integer; ABody: TJSONObject);
+  end;
+
+implementation
+
+{ TServiceClientes }
+
+procedure TServiceClientes.CadastrarCliente(ABody: TJSONObject);
+var
+  LFDQuery: TFDQuery;
+begin
+
+  LFDQuery := TFDQuery.Create(nil);
+  try
+    LFDQuery.Connection := Connection;
+    LFDQuery.SQL.Text :=
+
+      ' insert into PESSOAS pss ( ' +
+      '   pss.nome_pss, ' +
+      '   pss.id_cdd, ' +
+      '   pss.tipo_pss, ' +
+      '   pss.id_pse, ' +
+      '   pss.isento_icms_pss, ' +
+      '   pss.id_emp ' +
+      ' ) ' +
+      ' values ( ' +
+      '   :nome_pss, ' +
+      '   :id_cdd, ' +
+      '   :tipo_pss, ' +
+      '   :id_pse, ' +
+      '   :isento_icms_pss, ' +
+      '   :id_emp ' +
+      ' )';
+
+    LFDQuery.ParamByName('nome_pss').AsString := ABody.GetValue<string>('nome_pss');
+    LFDQuery.ParamByName('id_cdd').AsString := ABody.GetValue<string>('id_cdd');
+    LFDQuery.ParamByName('tipo_pss').AsString := ABody.GetValue<string>('tipo_pss');
+    LFDQuery.ParamByName('id_pse').AsString := ABody.GetValue<string>('id_pse');
+    LFDQuery.ParamByName('isento_icms_pss').AsString := ABody.GetValue<string>('isento_icms_pss');
+    LFDQuery.ParamByName('id_emp').AsString := ABody.GetValue<string>('id_emp');
+  except
+   raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
+  end;
+
+  JSONObject := LFDQuery.ToJSONObject;
+
+end;
+
+procedure TServiceClientes.EditarCliente(AIdCliente: Integer;
+  ABody: TJSONObject);
+begin
+
+end;
+
+procedure TServiceClientes.ListarCliente(
+  AParametros: TDictionary<string, string>);
+begin
+
+end;
+
+procedure TServiceClientes.LocalizarClientePorId(AIdCliente: Integer);
+begin
+
+end;
+
+end.

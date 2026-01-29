@@ -1,0 +1,142 @@
+unit Service.Clientes;
+
+interface
+
+uses
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  Horse.Exception,
+  System.SysUtils,
+  System.Generics.Collections;
+
+type
+  TServiceClientes = class(TServiceBase)
+  public
+    procedure ListarCliente(AParametros: TDictionary<string, string>);
+    procedure LocalizarClientePorId(AIdCliente: Integer);
+    procedure CadastrarCliente(ABody: TJSONObject);
+    procedure EditarCliente(AIdCliente: Integer; ABody: TJSONObject);
+  end;
+
+implementation
+
+{ TServiceClientes }
+
+procedure TServiceClientes.CadastrarCliente(ABody: TJSONObject);
+var
+  LFDQuery: TFDQuery;
+begin
+
+  LFDQuery := TFDQuery.Create(nil);
+  try
+    LFDQuery.Connection := Connection;
+    LFDQuery.SQL.Text :=
+
+      ' insert into PESSOAS pss ( ' +
+      '   pss.nome_pss, ' +
+      '   pss.id_cdd, ' +
+      '   pss.tipo_pss, ' +
+      '   pss.id_pse, ' +
+      '   pss.isento_icms_pss, ' +
+      '   pss.id_emp ' +
+      ' ) ' +
+      ' values ( ' +
+      '   :nome_pss, ' +
+      '   :id_cdd, ' +
+      '   :tipo_pss, ' +
+      '   :id_pse, ' +
+      '   :isento_icms_pss, ' +
+      '   :id_emp ' +
+      ' )';
+
+    LFDQuery.ParamByName('nome_pss').AsString := ABody.GetValue<string>('nome_pss');
+    LFDQuery.ParamByName('id_cdd').AsString := ABody.GetValue<string>('id_cdd');
+    LFDQuery.ParamByName('tipo_pss').AsString := ABody.GetValue<string>('tipo_pss');
+    LFDQuery.ParamByName('id_pse').AsString := ABody.GetValue<string>('id_pse');
+    LFDQuery.ParamByName('isento_icms_pss').AsString := ABody.GetValue<string>('isento_icms_pss');
+    LFDQuery.ParamByName('id_emp').AsString := ABody.GetValue<string>('id_emp');
+  except
+   raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
+  end;
+
+  JSONObject := LFDQuery.ToJSONObject;
+
+end;
+
+procedure TServiceClientes.EditarCliente(AIdCliente: Integer;
+  ABody: TJSONObject);
+var
+  LFDQuery: TFDQuery;
+begin
+
+  LFDQuery := TFDQuery.Create(nil);
+  try
+    LFDQuery.Connection := Connection;
+    LFDQuery.SQL.Text :=
+
+    ' UPDATE PESSOAS ' +
+    ' SET cpf_pss = :cpf_pss, ' +
+    '     cnpj_pss = :cnpj_pss, ' +
+    '     rg_pss = :rg_pss, ' +
+    '     nome_pss = :nome_pss, ' +
+    '     apelido_pss = :apelido_pss, ' +
+    '     cep_pss = :cep_pss, ' +
+    '     endereco_pss = :endereco_pss, ' +
+    '     numero_endereco_pss = :numero_endereco_pss, ' +
+    '     complemento_endereco_pss = :complemento_endereco_pss, ' +
+    '     bairro_pss = :bairro_pss, ' +
+    '     ponto_referencia_pss = :ponto_referencia_pss, ' +
+    '     id_cdd = :id_cdd, ' +
+    '     uf_pss = :uf_pss, ' +
+    '     telefone1_pss = :telefone1_pss, ' +
+    '     celular1_pss = :celular1_pss, ' +
+    '     email1_pss = :email1_pss, ' +
+    '     sexo_pss = :sexo_pss, ' +
+    '     whatsapp_pss = :whatsapp_pss, ' +
+    '     data_nascimento_pss = :data_nascimento_pss, ' +
+    ' WHERE (id_pss = :id_pss); '
+    ;
+    LFDQuery.ParamByName('cpf_pss').AsString := ABody.GetValue<string>('cpf_pss');
+    LFDQuery.ParamByName('cnpj_pss').AsString := ABody.GetValue<string>('cnpj_pss');
+    LFDQuery.ParamByName('rg_pss').AsString := ABody.GetValue<string>('rg_pss');
+    LFDQuery.ParamByName('nome_pss').AsString := ABody.GetValue<string>('nome_pss');
+    LFDQuery.ParamByName('apelido_pss').AsString := ABody.GetValue<string>('apelido_pss');
+    LFDQuery.ParamByName('cep_pss').AsString := ABody.GetValue<string>('cep_pss');
+    LFDQuery.ParamByName('endereco_pss').AsString := ABody.GetValue<string>('endereco_pss');
+    LFDQuery.ParamByName('numero_endereco_pss').AsString := ABody.GetValue<string>('numero_endereco_pss');
+    LFDQuery.ParamByName('complemento_endereco_pss').AsString := ABody.GetValue<string>('complemento_endereco_pss');
+    LFDQuery.ParamByName('bairro_pss').AsString := ABody.GetValue<string>('bairro_pss');
+    LFDQuery.ParamByName('ponto_referencia_pss').AsString := ABody.GetValue<string>('ponto_referencia_pss');
+    LFDQuery.ParamByName('id_cdd').AsInteger := ABody.GetValue<Integer>('id_cdd');
+    LFDQuery.ParamByName('uf_pss').AsString := ABody.GetValue<string>('uf_pss');
+    LFDQuery.ParamByName('telefone1_pss').AsString := ABody.GetValue<string>('telefone1_pss');
+    LFDQuery.ParamByName('celular1_pss').AsString := ABody.GetValue<string>('celular1_pss');
+    LFDQuery.ParamByName('email1_pss').AsString := ABody.GetValue<string>('email1_pss');
+    LFDQuery.ParamByName('sexo_pss').AsString := ABody.GetValue<string>('sexo_pss');
+    LFDQuery.ParamByName('whatsapp_pss').AsString := ABody.GetValue<string>('whatsapp_pss');
+    LFDQuery.ParamByName('data_nascimento_pss').AsDate := StrToDate(ABody.GetValue<string>('data_nascimento_pss'));
+    LFDQuery.ExecSQL();
+  except
+    raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
+  end;
+
+end;
+
+procedure TServiceClientes.ListarCliente(
+  AParametros: TDictionary<string, string>);
+begin
+
+end;
+
+procedure TServiceClientes.LocalizarClientePorId(AIdCliente: Integer);
+begin
+
+end;
+
+end.
