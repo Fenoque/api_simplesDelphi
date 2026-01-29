@@ -16,6 +16,8 @@ type
   class procedure ObterProdutoPorId(ARequest: THorseRequest; AResponse: THorseResponse);
   class procedure CadastrarProduto(ARequest: THorseRequest; AResponse: THorseResponse);
   class procedure AlterarProduto(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure ObterImagemProdutoPorId(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure PesquisaProdutos(ARequest: THorseRequest; AResponse: THorseResponse);
   
   public
     class procedure Registry;
@@ -68,6 +70,21 @@ begin
   end;
 end;
 
+class procedure TControllerProdutos.ObterImagemProdutoPorId(
+  ARequest: THorseRequest; AResponse: THorseResponse);
+var
+ LServiceProdutos: TServiceProdutos;
+begin
+  LServiceProdutos := TServiceProdutos.Create;
+   try
+      LServiceProdutos.ListarImagens(StrToInt(ARequest.Params['id-prd']));
+      AResponse.Send(LServiceProdutos.JSONObject).Status(200);
+    finally
+      FreeAndNil(LServiceProdutos);
+    end;
+
+end;
+
 class procedure TControllerProdutos.ObterProdutoPorId(ARequest: THorseRequest;
   AResponse: THorseResponse);
 var
@@ -82,12 +99,29 @@ begin
     end;
 end;
 
+class procedure TControllerProdutos.PesquisaProdutos(ARequest: THorseRequest;
+  AResponse: THorseResponse);
+var
+ LServiceProdutos: TServiceProdutos;
+begin
+  LServiceProdutos := TServiceProdutos.Create;
+  try
+    LServiceProdutos.PesquisarProduto(ARequest.Query.Dictionary);
+    AResponse.Send(LServiceProdutos.JSONArray);
+  finally
+    FreeAndNil(LServiceProdutos);
+  end;
+
+end;
+
 class procedure TControllerProdutos.Registry;
 begin
   THorse.Get('/produtos', ObtemProdutos);
   THorse.Get('/produtos/:id-prd', ObterProdutoPorId);
   THorse.Post('/produtos', CadastrarProduto);
   THorse.Put('/produto/:id-prd', AlterarProduto);
+  THorse.Get('/imgProdutos', PesquisaProdutos);
+  THorse.Get('/imgProdutos/:id-prd', ObterImagemProdutoPorId);
 end;
 
 end.

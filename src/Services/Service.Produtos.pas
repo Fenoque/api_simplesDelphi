@@ -23,6 +23,8 @@ type
     procedure LocalizarProdutoPorId(AIdPrd: Integer);
     procedure CadastroProduto(ABody: TJSONObject);
     procedure EditarProduto(AIdProd: Integer; ABody: TJSONObject);
+    procedure PesquisarProduto(AParametros: TDictionary<string, string>);
+    procedure ListarImagens(AIdPrd: Integer);
   end;
 
 
@@ -48,7 +50,7 @@ begin
        LPreco := 0;
       if ABody.TryGetValue<Double>('preco', LPreco) then
       begin
-        //valor da variável atualizado acima caso ele encontre, devido a isso nãope necessário realizar tarefa nesse ponto da lógica.
+        //valor da variável atualizado acima caso ele encontre, devido a isso não é necessário realizar tarefa nesse ponto da lógica.
       end
       else
       begin
@@ -80,25 +82,26 @@ begin
       LFDQuery.Connection := Connection;
       LFDQuery.SQL.Text :=
               'INSERT INTO produtos( '+
-              'descricao_prd, '+
-              'codigo_prd, '+
-              'tipo_prd, '+
-              'fracionado_prd, '+
-              'kit_prd, '+
-              'pesado_prd, '+
-              'id_org, '+
-              'controla_estoque_prd, '+
-              'status_prd)'+
-              ' VALUES('+
-              ':nome,'+
-              ':codigo_prd,' +
-              ':tipo_prd,'+
-              ':fracionado_prd,'+
-              ':kit_prd,'+
-              ':pesado_prd,'+
-              ':id_org,'+
-              ':controla_estoque_prd,'+
-              ':status_prd) RETURNING id_prd';
+              '  descricao_prd, '+
+              '  codigo_prd, '+
+              '  tipo_prd, '+
+              '  fracionado_prd, '+
+              '  kit_prd, '+
+              '  pesado_prd, '+
+              '  id_org, '+
+              '  controla_estoque_prd, '+
+              '  status_prd)'+
+              'VALUES('+
+              '  :nome,'+
+              '  :codigo_prd,' +
+              '  :tipo_prd,'+
+              '  :fracionado_prd,'+
+              '  :kit_prd,'+
+              '  :pesado_prd,'+
+              '  :id_org,'+
+              '  :controla_estoque_prd,'+
+              '  :status_prd) '+
+              'RETURNING id_prd';
 
       LFDQuery.ParamByName('nome').AsString := ABody.GetValue<string>('nome');
       LFDQuery.ParamByName('codigo_prd').AsString := LCodigoBarras;
@@ -146,8 +149,23 @@ begin
     LFDQuery := TFDQuery.Create(nil);
     try
       LFDQuery.Connection := Connection;
-      LFDQuery.SQL.Text := 'UPDATE produtos SET descricao_prd = :nome WHERE id_prd = :id_prd';
-      LFDQuery.ParamByName('nome').AsString := ABody.GetValue<string>('nome');
+      LFDQuery.SQL.Text :=
+      ' update PRODUTOS '+
+      '   set '+
+      '     codigo_prd = :codigo_prd, '+
+      '     referencia_prd = :referencia_prd, '+
+      '     descricao_prd = :descricao_prd, '+
+      '     unidade_venda_prd = :unidade_venda_prd, '+
+      '     ncm_prd = :ncm_prd, '+
+      '     status_prd = :status_prd '+
+      '   where (ID_PRD = :ID_PRD) '
+      ;
+      LFDQuery.ParamByName('codigo_prd').AsString := ABody.GetValue<string>('codigo_prd');
+      LFDQuery.ParamByName('referencia_prd').AsString := ABody.GetValue<string>('referencia_prd');
+      LFDQuery.ParamByName('descricao_prd').AsString := ABody.GetValue<string>('descricao_prd');
+      LFDQuery.ParamByName('unidade_venda_prd').AsString := ABody.GetValue<string>('unidade_venda_prd');
+      LFDQuery.ParamByName('ncm_prd').AsString := ABody.GetValue<string>('ncm_prd');
+      LFDQuery.ParamByName('status_prd').AsString := ABody.GetValue<string>('status_prd');
       LFDQuery.ParamByName('id_prd').AsInteger := AIdProd;
       LFDQuery.ExecSQL();
     except
@@ -160,6 +178,40 @@ begin
 
 end;
 
+procedure TServiceProdutos.ListarImagens(AIdPrd: Integer);
+var
+  LFDQuery: TFDQuery;
+begin
+  LFDQuery := TFDQuery.Create(nil);
+  try
+    LFDQuery.Connection := Connection;
+    LFDQuery.SQL.Text :=
+    ' SELECT '+
+    '   prd.id_prd, '+
+    '   prd.descricao_prd, '+
+    '   prd.unidade_venda_prd, '+
+    '   CASE  '+
+    '     WHEN (CURRENT_DATE BETWEEN ale.inicio_promocao_ale AND ale.fim_promocao_ale)  '+
+    '          AND (ale.preco_promocao_ale > 0) '+
+    '     THEN ale.preco_promocao_ale '+
+    '     ELSE ale.preco_venda_ale '+
+    '   END AS preco_vigente, '+
+    '   prd.url_imagem_prd '+
+    ' FROM produtos prd '+
+    ' INNER JOIN almoxarifados_estoque ale ON ale.id_prd = prd.id_prd '+
+    ' WHERE prd.id_prd = :id_prd  '+
+    '   AND prd.visivel_ecommerce_prd = TRUE '+
+    '   AND ale.id_alm = :id_alm; '
+    ;
+    LFDQuery.ParamByName('id_prd').AsInteger := AIdPrd;
+    LFDQuery.ParamByName('id_alm').AsInteger := 1; // ALTERAR PARA CONSTANTE
+    LFDQuery.Open;
+  except
+    raise EHorseException.New.Error('Ocorreu um erro no servidor!').Code(99);
+  end;
+  JSONObject := LFDQuery.ToJSONObject();
+end;
+
 procedure TServiceProdutos.ListarProdutos(AParametros: TDictionary<string, string>);
 var
   LFDQuery: TFDQuery;
@@ -170,17 +222,114 @@ begin
     try
       LFDQuery.Connection := Connection;
 
-      LFDQuery.SQL.Text :=  'SELECT id_prd AS codigo, descricao_prd AS descricao FROM produtos WHERE id_prd IS NOT NULL ';
+      LFDQuery.SQL.Text :=
+      ' SELECT '+
+      '   prd.id_prd AS id, '+
+      '   prd.codigo_prd AS codigo, '+
+      '   prd.referencia_prd AS referencia, '+
+      '   prd.descricao_prd AS descricao, '+
+      '   prd.unidade_venda_prd AS unidade, '+
+      '   prd.ncm_prd AS ncm, '+
+      '   prd.status_prd AS status, '+
+      '   ale.quantidade_atual_ale AS estoque, '+
+      '   ale.preco_venda_ale, '+
+      '   ale.preco_venda2_ale, '+
+      '   ale.preco_venda3_ale, '+
+      '   ale.preco_promocao_ale, '+
+      '   ale.preco_promocao2_ale, '+
+      '   ale.preco_promocao3_ale, '+
+      '   ale.inicio_promocao_ale, '+
+      '   ale.inicio_promocao2_ale, '+
+      '   ale.inicio_promocao3_ale, '+
+      '   ale.fim_promocao_ale, '+
+      '   ale.fim_promocao2_ale, '+
+      '   ale.fim_promocao3_ale '+
+      ' FROM produtos prd '+
+      ' INNER JOIN almoxarifados_estoque ale ON ale.id_prd = prd.id_prd '+
+      ' where prd.id_prd IS NOT NULL AND ale.id_alm = 1 '
+      ;
 
       if(AParametros.ContainsKey('descricao'))then
       begin
-        LFDQuery.SQL.Add('AND descricao_prd CONTAINING :descricao');
+        LFDQuery.SQL.Add(' AND prd.descricao_prd CONTAINING :descricao ');
         LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
+      end;
+
+      if(AParametros.ContainsKey('codigo'))then
+      begin
+        LFDQuery.SQL.Add(' AND prd.codigo_prd CONTAINING :codigo ');
+        LFDQuery.ParamByName('codigo').AsString := AParametros.Items['codigo'];
+      end;
+
+      if(AParametros.ContainsKey('referencia'))then
+      begin
+        LFDQuery.SQL.Add(' AND referencia_prd CONTAINING :referencia ');
+        LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
+      end;
+
+      if(AParametros.ContainsKey('unidade'))then
+      begin
+        LFDQuery.SQL.Add(' AND prd.unidade_venda_prd CONTAINING :unidade ');
+        LFDQuery.ParamByName('unidade').AsString := AParametros.Items['unidade'];
+      end;
+
+      if(AParametros.ContainsKey('ncm'))then
+      begin
+        LFDQuery.SQL.Add(' AND prd.ncm_prd CONTAINING :ncm ');
+        LFDQuery.ParamByName('ncm').AsString := AParametros.Items['ncm'];
+      end;
+
+      if(AParametros.ContainsKey('status'))then
+      begin
+        LFDQuery.SQL.Add(' prd.status_prd CONTAINING :status ');
+        LFDQuery.ParamByName('status').AsString := AParametros.Items['status'];
+      end;
+
+      if(AParametros.ContainsKey('estoque'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.quantidade_atual_ale CONTAINING :estoque ');
+        LFDQuery.ParamByName('estoque').AsInteger := StrToInt(AParametros.Items['estoque']);
+      end;
+
+      if(AParametros.ContainsKey('preco1'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_venda_ale CONTAINING :preco1 ');
+        LFDQuery.ParamByName('preco1').AsCurrency := StrToCurr(AParametros.Items['preco1']);
+      end;
+
+      if(AParametros.ContainsKey('preco2'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_venda2_ale CONTAINING :preco2 ');
+        LFDQuery.ParamByName('preco2').AsCurrency := StrToCurr(AParametros.Items['preco2']);
+      end;
+
+      if(AParametros.ContainsKey('preco3'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_venda3_ale CONTAINING :preco3 ');
+        LFDQuery.ParamByName('preco3').AsCurrency :=StrToCurr( AParametros.Items['preco3']);
+      end;
+
+      if(AParametros.ContainsKey('promocao1'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_promocao_ale CONTAINING :promocao1 ');
+        LFDQuery.ParamByName('promocao1').AsCurrency := StrToCurr(AParametros.Items['promocao1']);
+      end;
+
+      if(AParametros.ContainsKey('promocao2'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_promocao2_ale CONTAINING :promocao2 ');
+        LFDQuery.ParamByName('promocao2').AsCurrency := StrToCurr(AParametros.Items['promocao2']);
+      end;
+
+      if(AParametros.ContainsKey('promocao3'))then
+      begin
+        LFDQuery.SQL.Add(' AND ale.preco_promocao3_ale CONTAINING :descricao ');
+        LFDQuery.ParamByName('descricao').AsCurrency := StrToCurr(AParametros.Items['descricao']);
       end;
 
       if (AParametros.ContainsKey('limit')) then
       begin
-        LFDQuery.SQL.Add('OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY');
+        LFDQuery.SQL.Add(' OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY ');
         LFDQuery.ParamByName('limit').AsInteger := StrToIntDef(AParametros.Items['limit'], 5);
       end;
 
@@ -209,14 +358,91 @@ begin
   LFDQuery := TFDQuery.Create(nil);
   try
     LFDQuery.Connection := Connection;
-    LFDQuery.SQL.Text := 'SELECT id_prd AS codigo, descricao_prd AS descricao FROM produtos WHERE id_prd = :id_prd';
+    LFDQuery.SQL.Text :=
+    ' SELECT '+
+      '   prd.id_prd AS id, '+
+      '   prd.codigo_prd AS codigo, '+
+      '   prd.referencia_prd AS referencia, '+
+      '   prd.descricao_prd AS descricao, '+
+      '   prd.unidade_venda_prd AS unidade, '+
+      '   prd.ncm_prd AS ncm, '+
+      '   prd.status_prd AS status, '+
+      '   ale.quantidade_atual_ale AS estoque, '+
+      '   ale.preco_venda_ale, '+
+      '   ale.preco_venda2_ale, '+
+      '   ale.preco_venda3_ale, '+
+      '   ale.preco_promocao_ale, '+
+      '   ale.preco_promocao2_ale, '+
+      '   ale.preco_promocao3_ale, '+
+      '   ale.inicio_promocao_ale, '+
+      '   ale.inicio_promocao2_ale, '+
+      '   ale.inicio_promocao3_ale, '+
+      '   ale.fim_promocao_ale, '+
+      '   ale.fim_promocao2_ale, '+
+      '   ale.fim_promocao3_ale '+
+      ' FROM produtos prd '+
+      ' INNER JOIN almoxarifados_estoque ale ON ale.id_prd = prd.id_prd '+
+      ' where prd.id_prd = :id_prd AND ale.id_alm = :id_alm '
+    ;
     LFDQuery.ParamByName('id_prd').AsInteger := AIdPrd;
+    LFDQuery.ParamByName('id_alm').AsInteger := 1; // ALTERAR
     LFDQuery.Open;
   except
     raise EHorseException.New.Error('Ocorreu um erro no servidor!').Code(99);
   end;
   JSONObject := LFDQuery.ToJSONObject();
 
+end;
+
+procedure TServiceProdutos.PesquisarProduto(
+  AParametros: TDictionary<string, string>);
+var
+  LFDQuery: TFDQuery;
+begin
+  LFDQuery := TFDQuery.Create(nil);
+
+  try
+    try
+      LFDQuery.Connection := Connection;
+      LFDQuery.SQL.Text :=
+      ' SELECT '+
+      '   prd.id_prd, '+
+      '   prd.descricao_prd, '+
+      '   prd.unidade_venda_prd, '+
+      '   CASE  '+
+      '     WHEN (CURRENT_DATE BETWEEN ale.inicio_promocao_ale AND ale.fim_promocao_ale)  '+
+      '          AND (ale.preco_promocao_ale > 0) '+
+      '     THEN ale.preco_promocao_ale '+
+      '     ELSE ale.preco_venda_ale '+
+      '   END AS preco_vigente, '+
+      '   prd.url_imagem_prd '+
+      ' FROM produtos prd '+
+      ' INNER JOIN almoxarifados_estoque ale ON ale.id_prd = prd.id_prd '+
+      ' WHERE prd.visivel_ecommerce_prd = TRUE '+
+      '   AND ale.id_alm = 1 '
+      ;
+
+      if(AParametros.ContainsKey('descricao'))then
+      begin
+        LFDQuery.SQL.Add(' AND prd.descricao_prd CONTAINING :descricao ');
+        LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
+      end;
+
+      if (AParametros.ContainsKey('limit')) then
+      begin
+        LFDQuery.SQL.Add(' OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY ');
+        LFDQuery.ParamByName('limit').AsInteger := StrToIntDef(AParametros.Items['limit'], 12);
+      end;
+
+      LFDQuery.Open;
+      JSONArray := LFDQuery.ToJSONArray;
+    except
+      raise EHorseException.New.Error('Ocorreu um erro no servidor!').Code(99)
+    end;
+  finally
+    FreeAndNil(LFDQuery);
+
+  end;
 end;
 
 end.

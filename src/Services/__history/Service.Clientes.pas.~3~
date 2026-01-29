@@ -1,0 +1,51 @@
+unit Service.Clientes;
+
+interface
+
+uses
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  System.Generics.Collections;
+
+type
+  TServicePessoas = class(TServiceBase)
+  public
+    procedure ListarCliente(AParametros: TDictionary<string, string>);
+    procedure LocalizarClientePorId(AIdCliente: Integer);
+    procedure CadastrarCliente(ABody: TJSONObject);
+    procedure EditarCliente(AIdCliente: Integer; ABody: TJSONObject);
+  end;
+
+implementation
+
+{ TServicePessoas }
+
+procedure TServicePessoas.CadastrarCliente(ABody: TJSONObject);
+begin
+
+end;
+
+procedure TServicePessoas.EditarCliente(AIdCliente: Integer;
+  ABody: TJSONObject);
+begin
+
+end;
+
+procedure TServicePessoas.ListarCliente(
+  AParametros: TDictionary<string, string>);
+begin
+
+end;
+
+procedure TServicePessoas.LocalizarClientePorId(AIdCliente: Integer);
+begin
+
+end;
+
+end.

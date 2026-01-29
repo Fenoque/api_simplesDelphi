@@ -16,6 +16,9 @@
     <Transaction>2026/01/09 13:05:24.000.301,=C:\Users\Usuario\Desktop\multestudos\API\api-multvendas\api_simplesDelphi\Unit2.pas</Transaction>
     <Transaction>2026/01/09 13:06:10.000.422,C:\Users\Usuario\Desktop\multestudos\API\api-multvendas\api_simplesDelphi\src\Services\Service.Autenticacao.pas=C:\Users\Usuario\Desktop\multestudos\API\api-multvendas\api_simplesDelphi\Unit2.pas</Transaction>
     <Transaction>2026/01/09 14:08:57.000.276,C:\Users\Usuario\Desktop\multestudos\API\api-multvendas\api_simplesDelphi\Unit1.pas=</Transaction>
+    <Transaction>2026/01/28 13:28:59.282,=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/28 16:03:28.115,=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
+    <Transaction>2026/01/28 16:04:13.547,C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\src\Services\Service.Clientes.pas=C:\src\Delphi\producao\catMult\backend\api_simplesDelphi\Unit1.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="src"/>
@@ -26,5 +29,6 @@
     <File Path="src\Services\Service.Base.pas"/>
     <File Path="src\Services\Service.Produtos.pas"/>
     <File Path="src\Services\Service.Autenticacao.pas"/>
+    <File Path="src\Services\Service.Clientes.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

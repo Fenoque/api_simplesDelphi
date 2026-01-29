@@ -16,7 +16,8 @@ uses
   Service.Base in 'src\Services\Service.Base.pas',
   Service.Produtos in 'src\Services\Service.Produtos.pas',
   Controllers.Autenticacao in 'src\Controllers\Controllers.Autenticacao.pas',
-  Service.Autenticacao in 'src\Services\Service.Autenticacao.pas';
+  Service.Autenticacao in 'src\Services\Service.Autenticacao.pas',
+  Service.Clientes in 'src\Services\Service.Clientes.pas';
 
 begin
 
@@ -52,7 +53,9 @@ begin
   THorse.Listen(9000,
                 procedure
                 begin
+                  WriteLn('');
                   WriteLn(Format('API está funcionando em %s:%d', [THorse.Host, THorse.Port]));
+                  WriteLn('');
                   WriteLn('Pressione ENTER para encerrar...');
                 end);
   Readln;
