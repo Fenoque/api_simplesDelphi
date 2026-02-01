@@ -236,108 +236,48 @@ begin
       '   ale.preco_venda2_ale, '+
       '   ale.preco_venda3_ale, '+
       '   ale.preco_promocao_ale, '+
-      '   ale.preco_promocao2_ale, '+
-      '   ale.preco_promocao3_ale, '+
+//      '   ale.preco_promocao2_ale, '+
+//      '   ale.preco_promocao3_ale, '+ campos adicionados ainda não esxistem para o sql funcionar
       '   ale.inicio_promocao_ale, '+
-      '   ale.inicio_promocao2_ale, '+
-      '   ale.inicio_promocao3_ale, '+
-      '   ale.fim_promocao_ale, '+
-      '   ale.fim_promocao2_ale, '+
-      '   ale.fim_promocao3_ale '+
+//      '   ale.inicio_promocao2_ale, '+
+//      '   ale.inicio_promocao3_ale, '+
+      '   ale.fim_promocao_ale '+
+//      '   ale.fim_promocao2_ale, '+
+//      '   ale.fim_promocao3_ale '+
       ' FROM produtos prd '+
       ' INNER JOIN almoxarifados_estoque ale ON ale.id_prd = prd.id_prd '+
-      ' where prd.id_prd IS NOT NULL AND ale.id_alm = 1 '
-      ;
+      ' WHERE 1=1 AND ale.id_alm = 1 ';
 
-      if(AParametros.ContainsKey('descricao'))then
-      begin
-        LFDQuery.SQL.Add(' AND prd.descricao_prd CONTAINING :descricao ');
-        LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
-      end;
 
-      if(AParametros.ContainsKey('codigo'))then
-      begin
-        LFDQuery.SQL.Add(' AND prd.codigo_prd CONTAINING :codigo ');
-        LFDQuery.ParamByName('codigo').AsString := AParametros.Items['codigo'];
-      end;
+        if AParametros.ContainsKey('descricao') then
+        begin
+          LFDQuery.SQL.Add(' AND prd.descricao_prd CONTAINING :descricao ');
+          LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
+        end;
 
-      if(AParametros.ContainsKey('referencia'))then
-      begin
-        LFDQuery.SQL.Add(' AND referencia_prd CONTAINING :referencia ');
-        LFDQuery.ParamByName('descricao').AsString := AParametros.Items['descricao'];
-      end;
+        if AParametros.ContainsKey('referencia') then
+        begin
+          LFDQuery.SQL.Add(' AND prd.referencia_prd CONTAINING :referencia ');
+          LFDQuery.ParamByName('referencia').AsString := AParametros.Items['referencia'];
+        end;
 
-      if(AParametros.ContainsKey('unidade'))then
-      begin
-        LFDQuery.SQL.Add(' AND prd.unidade_venda_prd CONTAINING :unidade ');
-        LFDQuery.ParamByName('unidade').AsString := AParametros.Items['unidade'];
-      end;
+        if AParametros.ContainsKey('status') then
+        begin
+          LFDQuery.SQL.Add(' AND prd.status_prd = :status ');
+          LFDQuery.ParamByName('status').AsString := AParametros.Items['status'];
+        end;
 
-      if(AParametros.ContainsKey('ncm'))then
-      begin
-        LFDQuery.SQL.Add(' AND prd.ncm_prd CONTAINING :ncm ');
-        LFDQuery.ParamByName('ncm').AsString := AParametros.Items['ncm'];
-      end;
+        if AParametros.ContainsKey('preco1') then
+        begin
+          LFDQuery.SQL.Add(' AND ale.preco_venda_ale = :preco1 ');
+          LFDQuery.ParamByName('preco1').AsCurrency := StrToCurr(AParametros.Items['preco1']);
+        end;
 
-      if(AParametros.ContainsKey('status'))then
-      begin
-        LFDQuery.SQL.Add(' prd.status_prd CONTAINING :status ');
-        LFDQuery.ParamByName('status').AsString := AParametros.Items['status'];
-      end;
-
-      if(AParametros.ContainsKey('estoque'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.quantidade_atual_ale CONTAINING :estoque ');
-        LFDQuery.ParamByName('estoque').AsInteger := StrToInt(AParametros.Items['estoque']);
-      end;
-
-      if(AParametros.ContainsKey('preco1'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_venda_ale CONTAINING :preco1 ');
-        LFDQuery.ParamByName('preco1').AsCurrency := StrToCurr(AParametros.Items['preco1']);
-      end;
-
-      if(AParametros.ContainsKey('preco2'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_venda2_ale CONTAINING :preco2 ');
-        LFDQuery.ParamByName('preco2').AsCurrency := StrToCurr(AParametros.Items['preco2']);
-      end;
-
-      if(AParametros.ContainsKey('preco3'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_venda3_ale CONTAINING :preco3 ');
-        LFDQuery.ParamByName('preco3').AsCurrency :=StrToCurr( AParametros.Items['preco3']);
-      end;
-
-      if(AParametros.ContainsKey('promocao1'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_promocao_ale CONTAINING :promocao1 ');
-        LFDQuery.ParamByName('promocao1').AsCurrency := StrToCurr(AParametros.Items['promocao1']);
-      end;
-
-      if(AParametros.ContainsKey('promocao2'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_promocao2_ale CONTAINING :promocao2 ');
-        LFDQuery.ParamByName('promocao2').AsCurrency := StrToCurr(AParametros.Items['promocao2']);
-      end;
-
-      if(AParametros.ContainsKey('promocao3'))then
-      begin
-        LFDQuery.SQL.Add(' AND ale.preco_promocao3_ale CONTAINING :descricao ');
-        LFDQuery.ParamByName('descricao').AsCurrency := StrToCurr(AParametros.Items['descricao']);
-      end;
-
-      if (AParametros.ContainsKey('limit')) then
-      begin
-        LFDQuery.SQL.Add(' OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY ');
-        LFDQuery.ParamByName('limit').AsInteger := StrToIntDef(AParametros.Items['limit'], 5);
-      end;
-
-//      if(AParametros.ContainsKey('limit'))then
-//      begin
-//        LFDQuery.SQL.Add('AND max = :limit');
-//        LFDQuery.ParamByName('limit').AsString := AParametros.Items['limit'];
-//      end;
+        if(AParametros.ContainsKey('limit'))then
+        begin
+          LFDQuery.SQL.Add(' rows :limit');
+          LFDQuery.ParamByName('limit').AsString := AParametros.Items['limit'];
+        end;
 
 
       LFDQuery.Open;
