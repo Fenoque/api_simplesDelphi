@@ -1,0 +1,26 @@
+unit Controllers.Clientes;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.JSON,
+  Horse,
+  Service.Clientes,
+  System.SysUtils;
+
+type
+  TControllerPessoas = class
+
+  class procedure ObtemPessoas(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure CriarPessoas(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure AlteraPessoas(ARequest: THorseRequest; AResponse: THorseResponse);
+  class procedure ObterPessoasPorId(ARequest: THorseRequest; AResponse: THorseResponse);
+  public
+    class procedure Registry;
+
+end;
+
+implementation
+
+end.

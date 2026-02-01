@@ -45,6 +45,19 @@ begin
       '   pss.id_pse, ' +
       '   pss.isento_icms_pss, ' +
       '   pss.id_emp ' +
+      '   pss.apelido_pss, ' +
+      '   pss.cep_pss, ' +
+      '   pss.endereco_pss, ' +
+      '   pss.numero_endereco_pss, ' +
+      '   pss.complemento_endereco_pss, ' +
+      '   pss.bairro_pss, ' +
+      '   pss.ponto_referencia_pss, ' +
+      '   pss.uf_pss, ' +
+      '   pss.telefone1_pss, ' +
+      '   pss.whatsapp_pss, ' +
+      '   pss.email1_pss, ' +
+      '   pss.cpf_pss ' +
+      '   pss.data_nascimento_pss ' +
       ' ) ' +
       ' values ( ' +
       '   :nome_pss, ' +
@@ -53,7 +66,22 @@ begin
       '   :id_pse, ' +
       '   :isento_icms_pss, ' +
       '   :id_emp ' +
-      ' )';
+      '   :apelido_pss, ' +
+      '   :cep_pss, ' +
+      '   :endereco_pss, ' +
+      '   :numero_endereco_pss, ' +
+      '   :complemento_endereco_pss, ' +
+      '   :bairro_pss, ' +
+      '   :ponto_referencia_pss, ' +
+      '   :uf_pss, ' +
+      '   :telefone1_pss, ' +
+      '   :whatsapp_pss, ' +
+      '   :email1_pss, ' +
+      '   :cpf_pss ' +
+      '   :data_nascimento_pss ' +
+      ' )' +
+      ' RETURNING id_pss; '
+      ;
 
     LFDQuery.ParamByName('nome_pss').AsString := ABody.GetValue<string>('nome_pss');
     LFDQuery.ParamByName('id_cdd').AsString := ABody.GetValue<string>('id_cdd');
@@ -61,6 +89,19 @@ begin
     LFDQuery.ParamByName('id_pse').AsString := ABody.GetValue<string>('id_pse');
     LFDQuery.ParamByName('isento_icms_pss').AsString := ABody.GetValue<string>('isento_icms_pss');
     LFDQuery.ParamByName('id_emp').AsString := ABody.GetValue<string>('id_emp');
+    LFDQuery.ParamByName('apelido_pss').AsString := ABody.GetValue<string>('apelido_pss');
+    LFDQuery.ParamByName('cep_pss').AsString := ABody.GetValue<string>('cep_pss');
+    LFDQuery.ParamByName('endereco_pss').AsString := ABody.GetValue<string>('endereco_pss');
+    LFDQuery.ParamByName('numero_endereco_pss').AsString := ABody.GetValue<string>('numero_endereco_pss');
+    LFDQuery.ParamByName('complemento_endereco_pss').AsString := ABody.GetValue<string>('complemento_endereco_pss');
+    LFDQuery.ParamByName('bairro_pss').AsString := ABody.GetValue<string>('bairro_pss');
+    LFDQuery.ParamByName('ponto_referencia_pss').AsString := ABody.GetValue<string>('ponto_referencia_pss');
+    LFDQuery.ParamByName('uf_pss').AsString := ABody.GetValue<string>('uf_pss');
+    LFDQuery.ParamByName('telefone1_pss').AsString := ABody.GetValue<string>('telefone1_pss');
+    LFDQuery.ParamByName('whatsapp_pss').AsString := ABody.GetValue<string>('whatsapp_pss');
+    LFDQuery.ParamByName('email1_pss').AsString := ABody.GetValue<string>('email1_pss');
+    LFDQuery.ParamByName('cpf_pss').AsString := ABody.GetValue<string>('cpf_pss');
+    LFDQuery.ParamByName('data_nascimento_pss').AsString := ABody.GetValue<string>('data_nascimento_pss');
   except
    raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
   end;
@@ -121,6 +162,7 @@ begin
     LFDQuery.ParamByName('sexo_pss').AsString := ABody.GetValue<string>('sexo_pss');
     LFDQuery.ParamByName('whatsapp_pss').AsString := ABody.GetValue<string>('whatsapp_pss');
     LFDQuery.ParamByName('data_nascimento_pss').AsDate := StrToDate(ABody.GetValue<string>('data_nascimento_pss'));
+    LFDQuery.ParamByName('id_pss').AsInteger := ABody.GetValue<Integer>('id_pss');
     LFDQuery.ExecSQL();
   except
     raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
@@ -141,45 +183,30 @@ begin
 
       LFDQuery.SQL.Text :=
         ' SELECT ' +
-        '   id_pss, ' +
-        '   cpf_pss, ' +
-        '   cnpj_pss, ' +
-        '   rg_pss, ' +
-        '   ie_pss, ' +
-        '   nome_pss, ' +
-        '   apelido_pss, ' +
-        '   cep_pss, ' +
-        '   endereco_pss, ' +
-        '   numero_endereco_pss, ' +
-        '   complemento_endereco_pss, ' +
-        '   bairro_pss, ' +
-        '   ponto_referencia_pss, ' +
-        '   id_cdd, ' +
-        '   uf_pss, ' +
-        '   telefone1_pss, ' +
-        '   telefone2_pss, ' +
-        '   celular1_pss, ' +
-        '   email1_pss, ' +
-        '   status_pss, ' +
-        '   data_ultimacompra_pss, ' +
-        '   data_cadastro_pss, ' +
-        '   sexo_pss, ' +
-        '   tipo_pessoa_pss, ' +
-        '   tipo_pss, ' +
-        '   whatsapp_pss, ' +
-        '   id_pse, ' +
-        '   isento_icms_pss, ' +
-        '   data_nascimento_pss, ' +
-        '   id_emp, ' +
-        '   observacoes_pss, ' +
-        '   id_fcs, ' +
-        '   id_fnc, ' +
-        '   latitude_pss, ' +
-        '   longitude_pss, ' +
-        '   regime_tributario_pss, ' +
-        '   criado_em, ' +
-        '   datahora_ultalteracao_pss ' +
-        ' FROM pessoas ' +
+        '   pss.id_pss, ' +
+        '   pss.nome_pss, ' +
+        '   pss.apelido_pss, ' +
+        '   pss.telefone1_pss, ' +
+        '   pss.celular1_pss, ' +
+        '   pss.whatsapp_pss, ' +
+        '   pss.email1_pss, ' +
+        '   pss.cep_pss, ' +
+        '   pss.endereco_pss, ' +
+        '   pss.numero_endereco_pss, ' +
+        '   pss.complemento_endereco_pss, ' +
+        '   pss.bairro_pss, ' +
+        '   pss.ponto_referencia_pss, ' +
+        '   cdd.nome_cdd, ' +
+        '   CASE pss.sexo_pss ' +
+        '     WHEN ''F'' THEN ''Feminino'' ' +
+        '     WHEN ''M'' THEN ''Masculino'' ' +
+        '     WHEN ''E'' THEN ''Empresa'' ' +
+        '     WHEN ''O'' THEN ''Outros'' ' +
+        '     ELSE '''' ' +
+        '   END AS sexo_pss, ' +
+        '   pss.data_ultimacompra_pss ' +
+        ' FROM pessoas pss ' +
+        ' LEFT JOIN cidades cdd ON cdd.id_cdd = pss.id_cdd ' +
         ' WHERE id_pss IS NOT NULL '
         ;
       if(AParametros.ContainsKey('nome'))then
@@ -200,10 +227,10 @@ begin
         LFDQuery.ParamByName('codigo').AsString := AParametros.Items['codigo'];
       end;
 
-      if(AParametros.ContainsKey('status'))then
+      if(AParametros.ContainsKey('bairro_pss'))then
       begin
-        LFDQuery.SQL.Add(' AND status_pss = :status ');
-        LFDQuery.ParamByName('status').AsString := AParametros.Items['status'];
+        LFDQuery.SQL.Add(' AND bairro_pss = :bairro_pss ');
+        LFDQuery.ParamByName('bairro_pss').AsString := AParametros.Items['bairro_pss'];
       end;
 
       LFDQuery.Open;
@@ -218,7 +245,46 @@ begin
 end;
 
 procedure TServiceClientes.LocalizarClientePorId(AIdCliente: Integer);
+var
+  LFDQuery: TFDQuery;
 begin
+  LFDQuery := TFDQuery.Create(nil);
+  try
+    LFDQuery.Connection := Connection;
+    LFDQuery.SQL.Text :=
+    ' SELECT ' +
+        '   pss.id_pss, ' +
+        '   pss.nome_pss, ' +
+        '   pss.apelido_pss, ' +
+        '   pss.telefone1_pss, ' +
+        '   pss.celular1_pss, ' +
+        '   pss.whatsapp_pss, ' +
+        '   pss.email1_pss, ' +
+        '   pss.cep_pss, ' +
+        '   pss.endereco_pss, ' +
+        '   pss.numero_endereco_pss, ' +
+        '   pss.complemento_endereco_pss, ' +
+        '   pss.bairro_pss, ' +
+        '   pss.ponto_referencia_pss, ' +
+        '   cdd.nome_cdd, ' +
+        '   CASE pss.sexo_pss ' +
+        '     WHEN ''F'' THEN ''Feminino'' ' +
+        '     WHEN ''M'' THEN ''Masculino'' ' +
+        '     WHEN ''E'' THEN ''Empresa'' ' +
+        '     WHEN ''O'' THEN ''Outros'' ' +
+        '     ELSE '''' ' +
+        '   END AS sexo_pss, ' +
+        '   pss.data_ultimacompra_pss ' +
+        ' FROM pessoas pss ' +
+        ' LEFT JOIN cidades cdd ON cdd.id_cdd = pss.id_cdd ' +
+        ' WHERE id_pss = :idpss '
+        ;
+    LFDQuery.ParamByName('idpss').AsInteger := AIdCliente;
+    LFDQuery.Open;
+  except
+    raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99);
+  end;
+  JSONObject := LFDQuery.ToJSONObject();
 
 end;
 
