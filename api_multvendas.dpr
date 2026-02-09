@@ -20,7 +20,9 @@ uses
   Service.Clientes in 'src\Services\Service.Clientes.pas',
   Controllers.Clientes in 'src\Controllers\Controllers.Clientes.pas',
   Service.GrupoProduto in 'src\Services\Service.GrupoProduto.pas',
-  Controllers.GrupoProduto in 'src\Controllers\Controllers.GrupoProduto.pas';
+  Controllers.GrupoProduto in 'src\Controllers\Controllers.GrupoProduto.pas',
+  Service.Empresa in 'src\Services\Service.Empresa.pas',
+  Controllers.Empresas in 'src\Controllers\Controllers.Empresas.pas';
 
 begin
 
@@ -53,6 +55,7 @@ begin
   TControllerAutenticacao.Registry;
   TControllerClientes.Registry;
   TControllerGrupoProdutos.Registry;
+  TControllerEmpresas.Registry;
 //  TControllerUsuarios.Registry;
 
   THorse.Listen(9000,

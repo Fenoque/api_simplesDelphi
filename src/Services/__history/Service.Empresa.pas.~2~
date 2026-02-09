@@ -1,0 +1,34 @@
+unit Service.Empresa;
+
+interface
+
+uses
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  Horse.Exception,
+  System.SysUtils,
+  System.Generics.Collections;
+
+type
+  TServiceEmpresa = class(TServiceBase)
+  public
+    procedure ListarEmpresa(AParametros: TDictionary<string, string>);
+  end;
+
+implementation
+
+{ TServiceEmpresa }
+
+procedure TServiceEmpresa.ListarEmpresa(
+  AParametros: TDictionary<string, string>);
+begin
+
+end;
+
+end.

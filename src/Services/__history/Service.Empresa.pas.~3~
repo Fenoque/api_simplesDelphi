@@ -1,0 +1,79 @@
+unit Service.Empresa;
+
+interface
+
+uses
+  System.JSON,
+  DataSet.Serialize,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Intf,
+  Data.DB,
+  Service.Base,
+  Horse.Exception,
+  System.SysUtils,
+  System.Generics.Collections;
+
+type
+  TServiceEmpresa = class(TServiceBase)
+  public
+    procedure ListarEmpresa(AParametros: TDictionary<string, string>);
+  end;
+
+implementation
+
+{ TServiceEmpresa }
+
+procedure TServiceEmpresa.ListarEmpresa(
+  AParametros: TDictionary<string, string>);
+var
+  LFDQuery: TFDQuery;
+begin
+  LFDQuery := TFDQuery.Create(nil);
+
+  try
+    try
+      LFDQuery.Connection := Connection;
+
+      LFDQuery.SQL.Text :=
+      ' SELECT '+
+      '   emp.id_emp, '+
+      '   cdd.nome_cdd, '+
+      '   emp.cnpj_emp, '+
+      '   emp.ie_emp, '+
+      '   emp.razao_emp, '+
+      '   emp.fantasia_emp, '+
+      '   emp.sigla_emp, '+
+      '   emp.endereco_emp, '+
+      '   emp.numero_endereco_emp, '+
+      '   emp.complemento_endereco_emp, '+
+      '   emp.cep_emp, '+
+      '   emp.bairro_emp, '+
+      '   emp.uf_emp, '+
+      '   emp.fone1_emp, '+
+      '   emp.celular_emp, '+
+      '   emp.email_emp, '+
+      '   emp.logo_emp '+
+      ' FROM empresas emp '+
+      ' LEFT JOIN cidades cdd ON cdd.id_cdd = emp.id_cdd '+
+      ' WHERE emp.status_emp = ''A'' '
+      ;
+      if(AParametros.ContainsKey('bairro_pss'))then
+      begin
+        LFDQuery.SQL.Add(' AND bairro_pss = :bairro_pss ');
+        LFDQuery.ParamByName('bairro_pss').AsString := AParametros.Items['bairro_pss'];
+      end;
+
+      LFDQuery.Open;
+      JSONArray := LFDQuery.ToJSONArray;
+    except
+      raise EHorseException.New.Error(' Ocorreu um erro no servidor! ').Code(99)
+    end;
+  finally
+    FreeAndNil(LFDQuery);
+  end;
+
+end;
+
+end.
